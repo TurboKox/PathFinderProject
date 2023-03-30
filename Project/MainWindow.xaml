@@ -5,11 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="500"
+        Title="MainWindow" Height="600" Width="900"
         ResizeMode="NoResize"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Grid x:Name="MainGrid" PreviewMouseDown="MainGrid_PreviewMouseDown">
-        
+    <Grid x:Name="MainGrid" PreviewMouseDown="MainGrid_PreviewMouseDown" Margin="0">
+        <StackPanel x:Name="Options">
+            
+            <Button HorizontalAlignment="Right" Height="40" Width="150" Margin="0, 25, 0, 0">Set Start Position</Button>
+            <Button HorizontalAlignment="Right" Height="40" Width="150" Margin="0, 25, 0, 0">Set Destination Position</Button>
+            <Button HorizontalAlignment="Right" Height="40" Width="150" Margin="0, 25, 0, 0">Find Path</Button>
+            
+        </StackPanel>
     </Grid>
 </Window>

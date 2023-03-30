@@ -26,8 +26,8 @@ namespace Project
 
         private void GenerateTiles(int xCount, int yCount)
         {
-            int cellWidth = (int)Width / xCount;
-            int cellHeight = (int)Height / yCount;
+            int cellWidth = m_ViewportWidth / xCount;
+            int cellHeight = m_ViewportHeight / yCount;
 
             for (int i = 0; i < xCount; i++)
             {
@@ -35,35 +35,53 @@ namespace Project
                 rowDef.Height = new GridLength(cellHeight);
                 MainGrid.RowDefinitions.Add(rowDef);
 
+                
+            }
+            for (int j = 0; j < yCount; j++)
+            {
+                var columnDef = new ColumnDefinition();
+                columnDef.Width = new GridLength(cellWidth);
+                MainGrid.ColumnDefinitions.Add(columnDef);
+            }
+
+            for (int i = 0; i < xCount; i++)
+            {
                 for (int j = 0; j < yCount; j++)
                 {
-                    var columnDef = new ColumnDefinition();
-                    columnDef.Width = new GridLength(cellWidth);
-
                     Rectangle rectangle = new Rectangle();
-                    //rectangle.Fill = new SolidColorBrush(Color.FromRgb((byte)(i*j), 0, (byte)(i * j)));
-                    rectangle.Stroke = new  SolidColorBrush(Color.FromRgb(150, 150, 150));
+                    rectangle.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    rectangle.Stroke = new SolidColorBrush(Color.FromRgb(150, 150, 150));
                     Grid.SetRow(rectangle, i);
                     Grid.SetColumn(rectangle, j);
-
-                    MainGrid.ColumnDefinitions.Add(columnDef);
                     MainGrid.Children.Add(rectangle);
                 }
             }
+
+            var rowOptions = new RowDefinition();
+            rowOptions.Height = new GridLength(m_ViewportHeight);
+            MainGrid.RowDefinitions.Add(rowOptions);
+
+            var columnOptions = new ColumnDefinition();
+            columnOptions.Width = new GridLength(Width - m_ViewportWidth);
+            MainGrid.ColumnDefinitions.Add(columnOptions);
+
+            Grid.SetRow(Options, xCount);
+            Grid.SetColumn(Options, yCount);
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show(Mouse.GetPosition(this).ToString());
+            //MessageBox.Show(Mouse.GetPosition(this).ToString());
         }
 
         private void MainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var mouseWasDownOn = e.Source as FrameworkElement;
-            if (mouseWasDownOn != null)
-            {
-                //MessageBox.Show(mouseWasDownOn.ToString());
-            }
+            var cell = e.Source as Rectangle;
+            if (cell.Fill != new SolidColorBrush(Color.FromRgb(255, 255, 255)))
+                cell.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         }
+
+        private int m_ViewportWidth = 600;
+        private int m_ViewportHeight = 600;
     }
 }
