@@ -8,12 +8,17 @@ namespace Project
 {
     class Graph
     {
-        Graph(int[] matrix)
+        public Graph(int[] matrix)
         {
             m_Edges = matrix;
         }
 
-        private void PathSolver()
+        public Graph()
+        {
+
+        }
+
+        public void FindShortestPath(int start, int destination)
         {
 
         }

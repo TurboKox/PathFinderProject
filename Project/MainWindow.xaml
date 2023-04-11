@@ -5,17 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="900"
-        ResizeMode="NoResize"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+        Title="MainWindow" Height="640" Width="900"
+        ResizeMode="NoResize">
 
     <Grid x:Name="MainGrid" PreviewMouseDown="MainGrid_PreviewMouseDown" Margin="0">
-        <StackPanel x:Name="Options">
-            
-            <Button HorizontalAlignment="Right" Height="40" Width="150" Margin="0, 25, 0, 0">Set Start Position</Button>
-            <Button HorizontalAlignment="Right" Height="40" Width="150" Margin="0, 25, 0, 0">Set Destination Position</Button>
-            <Button HorizontalAlignment="Right" Height="40" Width="150" Margin="0, 25, 0, 0">Find Path</Button>
-            
-        </StackPanel>
+        
+        <Canvas x:Name="Options" Width="900" Height="640">
+            <Button Canvas.Right="10" Canvas.Top="10" Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetStartPositionBtn_Click">Set Start Position</Button>
+            <Button Canvas.Right="10" Canvas.Top="70"  Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetDestinationBtn_Click">Set Destination Position</Button>
+            <Button Canvas.Right="10" Canvas.Top="130" Height="40" Width="150" Margin="0, 0, 20, 0" Click="FindPathBtn_Click">Find Path</Button>
+        </Canvas>
+        
     </Grid>
 </Window>

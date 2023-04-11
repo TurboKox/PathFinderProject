@@ -21,7 +21,7 @@ namespace Project
         {
             InitializeComponent();
 
-            GenerateTiles(25, 25);
+            GenerateTiles(10, 10);
         }
 
         private void GenerateTiles(int xCount, int yCount)
@@ -34,9 +34,8 @@ namespace Project
                 var rowDef = new RowDefinition();
                 rowDef.Height = new GridLength(cellHeight);
                 MainGrid.RowDefinitions.Add(rowDef);
-
-                
             }
+
             for (int j = 0; j < yCount; j++)
             {
                 var columnDef = new ColumnDefinition();
@@ -51,37 +50,99 @@ namespace Project
                     Rectangle rectangle = new Rectangle();
                     rectangle.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                     rectangle.Stroke = new SolidColorBrush(Color.FromRgb(150, 150, 150));
+                    rectangle.Name = "Free";
+                    m_Rectangles.Add(rectangle);
                     Grid.SetRow(rectangle, i);
                     Grid.SetColumn(rectangle, j);
                     MainGrid.Children.Add(rectangle);
                 }
             }
-
-            var rowOptions = new RowDefinition();
-            rowOptions.Height = new GridLength(m_ViewportHeight);
-            MainGrid.RowDefinitions.Add(rowOptions);
-
-            var columnOptions = new ColumnDefinition();
-            columnOptions.Width = new GridLength(Width - m_ViewportWidth);
-            MainGrid.ColumnDefinitions.Add(columnOptions);
-
-            Grid.SetRow(Options, xCount);
-            Grid.SetColumn(Options, yCount);
-        }
-
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            //MessageBox.Show(Mouse.GetPosition(this).ToString());
         }
 
         private void MainGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             var cell = e.Source as Rectangle;
-            if (cell.Fill != new SolidColorBrush(Color.FromRgb(255, 255, 255)))
-                cell.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+
+            if (cell != null)
+            {
+                if (m_CurrentAction == Action.SET_START && !m_IsStartSet)
+                {
+                    if (cell.Name == "Free")
+                    {
+                        cell.Fill = new SolidColorBrush(Color.FromRgb(0, 200, 0));
+                        cell.Name = "Start";
+                        m_IsStartSet = true;
+                    }
+                }
+                else if (m_CurrentAction == Action.SET_DESTINATION && !m_IsDestinationSet)
+                {
+                    if (cell.Name == "Free")
+                    {
+                        cell.Fill = new SolidColorBrush(Color.FromRgb(200, 0, 0));
+                        cell.Name = "Destination";
+                        m_IsDestinationSet = true;
+                    }
+                }
+                else
+                {
+                    if (cell.Name == "Free")
+                    {
+                        cell.Fill = new SolidColorBrush(Color.FromRgb(100, 100, 100));
+                        cell.Name = "Wall";
+                    }
+                    else if (cell.Name == "Wall")
+                    {
+                        cell.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                        cell.Name = "Free";
+                    }
+                }
+            }
+        }
+
+        private void ClearCell(string cellType)
+        {
+            for (int i = 0; i < 10 * 10; i++)
+            {
+                if (m_Rectangles[i].Name == cellType)
+                {
+                    m_Rectangles[i].Name = "Free";
+                    m_Rectangles[i].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                }
+            }
+        }
+
+        private void SetStartPositionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            m_CurrentAction = Action.SET_START;
+            if (m_IsStartSet)
+                ClearCell("Start");
+            m_IsStartSet = false;
+        }
+
+        private void SetDestinationBtn_Click(object sender, RoutedEventArgs e)
+        {
+            m_CurrentAction = Action.SET_DESTINATION;
+            if (m_IsDestinationSet)
+                ClearCell("Destination");
+            m_IsDestinationSet = false;
+        }
+
+        private void FindPathBtn_Click(object sender, RoutedEventArgs e)
+        {
+            m_Graph.FindShortestPath(3, 5);
         }
 
         private int m_ViewportWidth = 600;
         private int m_ViewportHeight = 600;
+        private bool m_IsStartSet = false;
+        private bool m_IsDestinationSet = false;
+        private List<Rectangle> m_Rectangles = new List<Rectangle>();
+        private enum Action
+        {
+            SET_START, SET_DESTINATION
+        }
+        private Action m_CurrentAction = (Action)3;
+        
+        private Graph m_Graph = new Graph();
     }
 }
