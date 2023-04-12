@@ -21,7 +21,7 @@ namespace Project
         {
             InitializeComponent();
 
-            GenerateTiles(10, 10);
+            GenerateTiles(xCount, yCount);
         }
 
         private void GenerateTiles(int xCount, int yCount)
@@ -101,7 +101,7 @@ namespace Project
 
         private void ClearCell(string cellType)
         {
-            for (int i = 0; i < 10 * 10; i++)
+            for (int i = 0; i < xCount * yCount; i++)
             {
                 if (m_Rectangles[i].Name == cellType)
                 {
@@ -132,7 +132,7 @@ namespace Project
 
         }
 
-
+        private int xCount = 10, yCount = 10;
         private int m_ViewportWidth = 600;
         private int m_ViewportHeight = 600;
         private bool m_IsStartSet = false;
