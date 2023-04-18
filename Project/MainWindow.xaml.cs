@@ -22,6 +22,8 @@ namespace Project
             InitializeComponent();
 
             GenerateTiles(xCount, yCount);
+            SetCell("Start", 2, 4);
+            SetCell("Destination", 7, 3);
         }
 
         private void GenerateTiles(int xCount, int yCount)
@@ -99,7 +101,22 @@ namespace Project
             }
         }
 
-        private void ClearCell(string cellType)
+        void SetCell(string cellType, int xCellIndex, int yCellIndex)
+        {
+            m_Rectangles[xCellIndex + yCellIndex * yCount].Name = cellType;
+            if (cellType == "Start")
+            {
+                m_Rectangles[xCellIndex + yCellIndex * yCount].Fill = new SolidColorBrush(Color.FromRgb(0, 200, 0));
+                m_IsStartSet = true;
+            }
+            else if (cellType == "Destination")
+            {
+                m_Rectangles[xCellIndex + yCellIndex * yCount].Fill = new SolidColorBrush(Color.FromRgb(200, 0, 0));
+                m_IsDestinationSet = true;
+            }
+        }
+
+        private void ClearGivenCell(string cellType)
         {
             for (int i = 0; i < xCount * yCount; i++)
             {
@@ -115,7 +132,7 @@ namespace Project
         {
             m_CurrentAction = Action.SET_START;
             if (m_IsStartSet)
-                ClearCell("Start");
+                ClearGivenCell("Start");
             m_IsStartSet = false;
         }
 
@@ -123,7 +140,7 @@ namespace Project
         {
             m_CurrentAction = Action.SET_DESTINATION;
             if (m_IsDestinationSet)
-                ClearCell("Destination");
+                ClearGivenCell("Destination");
             m_IsDestinationSet = false;
         }
 
@@ -142,6 +159,7 @@ namespace Project
         {
             SET_START, SET_DESTINATION
         }
+
         private Action m_CurrentAction = (Action)3;
     }
 }
