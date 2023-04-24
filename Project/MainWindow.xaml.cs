@@ -53,7 +53,7 @@ namespace Project
                     rectangle.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                     rectangle.Stroke = new SolidColorBrush(Color.FromRgb(150, 150, 150));
                     rectangle.Name = "Free";
-                    
+
                     m_Rectangles.Add(rectangle);
                     Grid.SetRow(rectangle, i);
                     Grid.SetColumn(rectangle, j);
@@ -203,7 +203,7 @@ namespace Project
                 if (m_Rectangles[i].Name == "Path")
                     m_Rectangles[i].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
             }
-                
+
         }
 
         class Graph
@@ -289,7 +289,7 @@ namespace Project
             private LinkedList<int>[] m_AdjecencyList;
         }
 
-        private static int xCount = 20, yCount = 20;
+        private static int xCount = 15, yCount = 15;
         private static int xStartPos = 2, yStartPos = 3;
         private static int xDestPos = 7, yDestPos = 4;
 
