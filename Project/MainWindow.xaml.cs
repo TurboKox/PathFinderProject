@@ -21,7 +21,10 @@ namespace Project
         {
             InitializeComponent();
 
+            // Init
+
             GenerateTiles(xCount, yCount);
+
             SetCell("Start", xStartPos, yStartPos);
             SetCell("Destination", xDestPos, yDestPos);
         }
@@ -117,26 +120,26 @@ namespace Project
             return -1;
         }
 
-        private void UpdateAdjecentList()
+        private void UpdateAdjacencyList()
         {
-            graph.ClearAdjecencyList();
+            graph.ClearAdjacencyList();
             for (int i = 0; i < yCount; i++)
             {
                 for (int j = 0; j < xCount; j++)
                 {
-                    // sprawdz lewo
+                    // check left
                     if (j - 1 >= 0 && m_Rectangles[(j - 1) + i * yCount].Name != "Wall")
                         graph.AddEdge(j + i * yCount, (j - 1) + i * yCount);
 
-                    //sprawdz prawo
+                    // check right
                     if (j + 1 < xCount && m_Rectangles[(j + 1) + i * yCount].Name != "Wall")
                         graph.AddEdge(j + i * yCount, (j + 1) + i * yCount);
 
-                    // sprawdz gore
+                    // check up
                     if (i - 1 >= 0 && m_Rectangles[j + (i - 1) * yCount].Name != "Wall")
                         graph.AddEdge(j + i * yCount, j + (i - 1) * yCount);
 
-                    // sprawdz dol
+                    // check down
                     if (i + 1 < yCount && m_Rectangles[j + (i + 1) * yCount].Name != "Wall")
                         graph.AddEdge(j + i * yCount, j + (i + 1) * yCount);
                 }
@@ -192,8 +195,8 @@ namespace Project
 
         private void FindPathBtn_Click(object sender, RoutedEventArgs e)
         {
-            UpdateAdjecentList();
             ClearCurrentPath();
+            UpdateAdjacencyList();
             graph.BFS(m_StartIndex, m_DestIndex, ref m_Rectangles);
         }
 
@@ -222,25 +225,24 @@ namespace Project
         {
             public Graph(int verticiesCount)
             {
-                m_AdjecencyList = new LinkedList<int>[verticiesCount];
+                m_AdjacencyList = new LinkedList<int>[verticiesCount];
                 V = verticiesCount;
 
-                for (int i = 0; i < m_AdjecencyList.Length; i++)
-                    m_AdjecencyList[i] = new LinkedList<int>();
-
-            }
-
-            public void ClearAdjecencyList()
-            {
-                m_AdjecencyList = new LinkedList<int>[V];
-
-                for (int i = 0; i < m_AdjecencyList.Length; i++)
-                    m_AdjecencyList[i] = new LinkedList<int>();
+                for (int i = 0; i < m_AdjacencyList.Length; i++)
+                    m_AdjacencyList[i] = new LinkedList<int>();
             }
 
             public void AddEdge(int v, int w)
             {
-                m_AdjecencyList[v].AddLast(w);
+                m_AdjacencyList[v].AddLast(w);
+            }
+
+            public void ClearAdjacencyList()
+            {
+                m_AdjacencyList = new LinkedList<int>[V];
+
+                for (int i = 0; i < m_AdjacencyList.Length; i++)
+                    m_AdjacencyList[i] = new LinkedList<int>();
             }
 
             public void BFS(int start, int destination, ref List<Rectangle> rectArr)
@@ -265,7 +267,7 @@ namespace Project
 
                     queue.RemoveFirst();
 
-                    LinkedList<int> list = m_AdjecencyList[current];
+                    LinkedList<int> list = m_AdjacencyList[current];
 
                     foreach (var val in list)
                     {
@@ -285,7 +287,6 @@ namespace Project
                     path.Add(curr);
                     curr = parent[curr];
                 }
-                path.Reverse();
 
                 foreach (var val in path)
                 {
@@ -298,10 +299,17 @@ namespace Project
             }
 
             private int V;
-            private LinkedList<int>[] m_AdjecencyList;
+            private LinkedList<int>[] m_AdjacencyList;
+        }
+        private enum Action
+        {
+            SET_START, SET_DESTINATION
         }
 
+        // Config
+
         private static int xCount = 15, yCount = 15;
+        
         private static int xStartPos = 2, yStartPos = 3;
         private static int xDestPos = 7, yDestPos = 4;
 
@@ -309,12 +317,8 @@ namespace Project
         private int m_ViewportHeight = 600;
         private bool m_IsStartSet = false;
         private bool m_IsDestinationSet = false;
-        private List<Rectangle> m_Rectangles = new List<Rectangle>();
-        private enum Action
-        {
-            SET_START, SET_DESTINATION
-        }
 
+        private List<Rectangle> m_Rectangles = new List<Rectangle>();
         private Action m_CurrentAction = (Action)3;
 
         private Graph graph = new Graph(xCount * yCount);
