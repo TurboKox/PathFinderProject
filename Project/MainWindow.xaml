@@ -14,6 +14,7 @@
             <Button Canvas.Right="10" Canvas.Top="10" Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetStartPositionBtn_Click">Set Start Position</Button>
             <Button Canvas.Right="10" Canvas.Top="70"  Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetDestinationBtn_Click">Set Destination Position</Button>
             <Button Canvas.Right="10" Canvas.Top="130" Height="40" Width="150" Margin="0, 0, 20, 0" Click="FindPathBtn_Click">Find Path</Button>
+            <Button Canvas.Right="10" Canvas.Top="190" Height="40" Width="150" Margin="0, 0, 20, 0" Click="ClearBoard_Click">Clear Board</Button>
         </Canvas>
         
     </Grid>

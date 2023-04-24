@@ -70,7 +70,7 @@ namespace Project
             {
                 if (m_CurrentAction == Action.SET_START && !m_IsStartSet)
                 {
-                    if (cell.Name == "Free")
+                    if (cell.Name == "Free" || cell.Name == "Path")
                     {
                         cell.Fill = new SolidColorBrush(Color.FromRgb(0, 200, 0));
                         cell.Name = "Start";
@@ -81,7 +81,7 @@ namespace Project
                 }
                 else if (m_CurrentAction == Action.SET_DESTINATION && !m_IsDestinationSet)
                 {
-                    if (cell.Name == "Free")
+                    if (cell.Name == "Free" || cell.Name == "Path")
                     {
                         cell.Fill = new SolidColorBrush(Color.FromRgb(200, 0, 0));
                         cell.Name = "Destination";
@@ -196,14 +196,26 @@ namespace Project
             ClearCurrentPath();
             graph.BFS(m_StartIndex, m_DestIndex, ref m_Rectangles);
         }
+
+        private void ClearBoard_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < xCount * yCount; i++)
+            {
+                if (m_Rectangles[i].Name == "Wall" || m_Rectangles[i].Name == "Path")
+                {
+                    m_Rectangles[i].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    m_Rectangles[i].Name = "Free";
+                }
+            }
+        }
+
         private void ClearCurrentPath()
         {
-            for (int i = 0; i < m_Rectangles.Count; i++)
+            for (int i = 0; i < xCount * yCount; i++)
             {
                 if (m_Rectangles[i].Name == "Path")
                     m_Rectangles[i].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
             }
-
         }
 
         class Graph
@@ -304,6 +316,7 @@ namespace Project
         }
 
         private Action m_CurrentAction = (Action)3;
+
         private Graph graph = new Graph(xCount * yCount);
         private int m_StartIndex = xStartPos + yStartPos * yCount;
         private int m_DestIndex = xDestPos + yDestPos * yCount;
