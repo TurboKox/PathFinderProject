@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace Project
 {
@@ -93,7 +94,7 @@ namespace Project
                         m_DestIndex = GetRectangleIndex(cell);
                     }
                 }
-                else
+                else if (!m_CurrentlyFinding)
                 {
                     if (cell.Name == "Free" || cell.Name == "Path")
                     {
@@ -195,19 +196,25 @@ namespace Project
 
         private void FindPathBtn_Click(object sender, RoutedEventArgs e)
         {
-            ClearCurrentPath();
-            UpdateAdjacencyList();
-            m_Graph.BFS(m_StartIndex, m_DestIndex, ref m_Rectangles);
+            if (m_IsStartSet && m_IsDestinationSet)
+            {
+                ClearCurrentPath();
+                UpdateAdjacencyList();
+                m_Graph.BFS(m_StartIndex, m_DestIndex, m_Rectangles);
+            }
         }
 
         private void ClearBoard_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < xCount * yCount; i++)
+            if (!m_CurrentlyFinding)
             {
-                if (m_Rectangles[i].Name == "Wall" || m_Rectangles[i].Name == "Path")
+                for (int i = 0; i < xCount * yCount; i++)
                 {
-                    m_Rectangles[i].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                    m_Rectangles[i].Name = "Free";
+                    if (m_Rectangles[i].Name == "Wall" || m_Rectangles[i].Name == "Path")
+                    {
+                        m_Rectangles[i].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                        m_Rectangles[i].Name = "Free";
+                    }
                 }
             }
         }
@@ -245,7 +252,7 @@ namespace Project
                     m_AdjacencyList[i] = new LinkedList<int>();
             }
 
-            public void BFS(int start, int destination, ref List<Rectangle> rectArr)
+            public async void BFS(int start, int destination, List<Rectangle> rectArr)
             {
                 int[] parent = new int[V];
                 for (int i = 0; i < V; i++)
@@ -287,15 +294,23 @@ namespace Project
                     path.Add(curr);
                     curr = parent[curr];
                 }
+                path.Reverse();
 
+                m_CurrentlyFinding = true;
                 foreach (var val in path)
                 {
                     if (val != start && val != destination)
                     {
                         rectArr[val].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 0));
                         rectArr[val].Name = "Path";
+
+                        if (!m_IsStartSet || !m_IsDestinationSet)
+                            rectArr[val].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                     }
+                    
+                    await Task.Delay(20);
                 }
+                m_CurrentlyFinding = false;
             }
 
             private int V;
@@ -315,8 +330,8 @@ namespace Project
 
         private int m_ViewportWidth = 600;
         private int m_ViewportHeight = 600;
-        private bool m_IsStartSet = false;
-        private bool m_IsDestinationSet = false;
+        private static bool m_IsStartSet = false;
+        private static  bool m_IsDestinationSet = false;
 
         private List<Rectangle> m_Rectangles = new List<Rectangle>();
         private Action m_CurrentAction = (Action)3;
@@ -324,5 +339,7 @@ namespace Project
         private Graph m_Graph = new Graph(xCount * yCount);
         private int m_StartIndex = xStartPos + yStartPos * yCount;
         private int m_DestIndex = xDestPos + yDestPos * yCount;
+
+        private static bool m_CurrentlyFinding = false;
     }
 }
