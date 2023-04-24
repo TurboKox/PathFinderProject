@@ -196,7 +196,7 @@ namespace Project
 
         private void FindPathBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (m_IsStartSet && m_IsDestinationSet)
+            if (m_IsStartSet && m_IsDestinationSet && !m_CurrentlyFinding)
             {
                 ClearCurrentPath();
                 UpdateAdjacencyList();
@@ -326,7 +326,7 @@ namespace Project
         private static int xCount = 15, yCount = 15;
         
         private static int xStartPos = 2, yStartPos = 3;
-        private static int xDestPos = 7, yDestPos = 4;
+        private static int xDestPos = 12, yDestPos = 7;
 
         private int m_ViewportWidth = 600;
         private int m_ViewportHeight = 600;
