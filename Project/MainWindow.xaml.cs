@@ -122,26 +122,26 @@ namespace Project
 
         private void UpdateAdjacencyList()
         {
-            graph.ClearAdjacencyList();
+            m_Graph.ClearAdjacencyList();
             for (int i = 0; i < yCount; i++)
             {
                 for (int j = 0; j < xCount; j++)
                 {
                     // check left
                     if (j - 1 >= 0 && m_Rectangles[(j - 1) + i * yCount].Name != "Wall")
-                        graph.AddEdge(j + i * yCount, (j - 1) + i * yCount);
+                        m_Graph.AddEdge(j + i * yCount, (j - 1) + i * yCount);
 
                     // check right
                     if (j + 1 < xCount && m_Rectangles[(j + 1) + i * yCount].Name != "Wall")
-                        graph.AddEdge(j + i * yCount, (j + 1) + i * yCount);
+                        m_Graph.AddEdge(j + i * yCount, (j + 1) + i * yCount);
 
                     // check up
                     if (i - 1 >= 0 && m_Rectangles[j + (i - 1) * yCount].Name != "Wall")
-                        graph.AddEdge(j + i * yCount, j + (i - 1) * yCount);
+                        m_Graph.AddEdge(j + i * yCount, j + (i - 1) * yCount);
 
                     // check down
                     if (i + 1 < yCount && m_Rectangles[j + (i + 1) * yCount].Name != "Wall")
-                        graph.AddEdge(j + i * yCount, j + (i + 1) * yCount);
+                        m_Graph.AddEdge(j + i * yCount, j + (i + 1) * yCount);
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace Project
         {
             ClearCurrentPath();
             UpdateAdjacencyList();
-            graph.BFS(m_StartIndex, m_DestIndex, ref m_Rectangles);
+            m_Graph.BFS(m_StartIndex, m_DestIndex, ref m_Rectangles);
         }
 
         private void ClearBoard_Click(object sender, RoutedEventArgs e)
@@ -321,7 +321,7 @@ namespace Project
         private List<Rectangle> m_Rectangles = new List<Rectangle>();
         private Action m_CurrentAction = (Action)3;
 
-        private Graph graph = new Graph(xCount * yCount);
+        private Graph m_Graph = new Graph(xCount * yCount);
         private int m_StartIndex = xStartPos + yStartPos * yCount;
         private int m_DestIndex = xDestPos + yDestPos * yCount;
     }
