@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
 
 namespace Project
 {
@@ -257,20 +256,25 @@ namespace Project
                 int[] parent = new int[V];
                 for (int i = 0; i < V; i++)
                     parent[i] = -1;
+
                 bool[] visited = new bool[V];
                 for (int i = 0; i < V; i++)
                     visited[i] = false;
 
                 LinkedList<int> queue = new LinkedList<int>();
-
                 visited[start] = true;
                 queue.AddLast(start);
+
+                bool foundPath = false;
 
                 while (queue.Any())
                 {
                     int current = queue.First();
                     if (current == destination)
+                    {
+                        foundPath = true;
                         break;
+                    }
 
                     queue.RemoveFirst();
 
@@ -287,30 +291,47 @@ namespace Project
                     }
                 }
 
-                List<int> path = new List<int>();
-                int curr = destination;
-                while (curr != -1)
+                if (!foundPath)
                 {
-                    path.Add(curr);
-                    curr = parent[curr];
-                }
-                path.Reverse();
-
-                m_CurrentlyFinding = true;
-                foreach (var val in path)
-                {
-                    if (val != start && val != destination)
+                    int delayIntensity = 20;
+                    for (int i = 0; i < delayIntensity; i++)
                     {
-                        rectArr[val].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 0));
-                        rectArr[val].Name = "Path";
-
-                        if (!m_IsStartSet || !m_IsDestinationSet)
-                            rectArr[val].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                        for (int j = 0; j < xCount * yCount; j++)
+                        {
+                            if (rectArr[j].Name == "Free" || rectArr[j].Name == "Path")
+                                rectArr[j].Fill = new SolidColorBrush(Color.FromRgb(255, (byte)(255 * i/(delayIntensity - 1)), (byte)(255 * i / (delayIntensity - 1))));
+                        }
+                        await Task.Delay(delayIntensity - i);
                     }
-                    
-                    await Task.Delay(20);
                 }
-                m_CurrentlyFinding = false;
+                else
+                {
+                    List<int> path = new List<int>();
+                    int index = destination;
+                    while (index != -1)
+                    {
+                        path.Add(index);
+                        index = parent[index];
+                    }
+                    path.Reverse();
+
+                    m_CurrentlyFinding = true;
+                    foreach (var val in path)
+                    {
+                        if (val != start && val != destination)
+                        {
+                            rectArr[val].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+                            rectArr[val].Name = "Path";
+
+                            if (!m_IsStartSet || !m_IsDestinationSet)
+                                rectArr[val].Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                        }
+                    
+                        await Task.Delay(20);
+                    }
+                    m_CurrentlyFinding = false;
+                }
+
             }
 
             private int V;
