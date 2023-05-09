@@ -25,8 +25,8 @@ namespace Project
 
             GenerateTiles(xCount, yCount);
 
-            SetCell("Start", xStartPos, yStartPos);
-            SetCell("Destination", xDestPos, yDestPos);
+            SetCell("Start", m_StartIndex);
+            SetCell("Destination", m_DestIndex);
         }
 
         private void GenerateTiles(int xCount, int yCount)
@@ -56,7 +56,7 @@ namespace Project
                     rectangle.Fill = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                     rectangle.Stroke = new SolidColorBrush(Color.FromRgb(150, 150, 150));
                     rectangle.Name = "Free";
-
+                    
                     m_Rectangles.Add(rectangle);
                     Grid.SetRow(rectangle, i);
                     Grid.SetColumn(rectangle, j);
@@ -109,6 +109,35 @@ namespace Project
             }
         }
 
+        private void FreeMapBuffer()
+        {
+            for (int i = 0; i < yCount; i++)
+            {
+                for (int j = 0; j < xCount; j++)
+                {
+                    MainGrid.Children.Remove(m_Rectangles[j + i * yCount]);
+                    MainGrid.RowDefinitions.Clear();
+                    MainGrid.ColumnDefinitions.Clear();
+                }
+            }
+            m_Rectangles.Clear();
+        }
+
+        private void Slider_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            FreeMapBuffer();
+
+            var slider = sender as Slider;
+            xCount = (int)slider.Value;
+            yCount = (int)slider.Value;
+
+            MapSizeLbl.Content = "Map Size: " + xCount + " x " + yCount;
+            GenerateTiles(xCount, yCount);
+                
+            m_IsStartSet = false;
+            m_IsDestinationSet = false;
+        }
+
         private int GetRectangleIndex(Rectangle rect)
         {
             for (int i = 0; i < m_Rectangles.Count; i++)
@@ -116,7 +145,7 @@ namespace Project
                 if (rect == m_Rectangles[i])
                     return i;
             }
-
+            
             return -1;
         }
 
@@ -146,17 +175,17 @@ namespace Project
             }
         }
 
-        private void SetCell(string cellType, int xCellIndex, int yCellIndex)
+        private void SetCell(string cellType, int index)
         {
-            m_Rectangles[xCellIndex + yCellIndex * yCount].Name = cellType;
+            m_Rectangles[index].Name = cellType;
             if (cellType == "Start")
             {
-                m_Rectangles[xCellIndex + yCellIndex * yCount].Fill = new SolidColorBrush(Color.FromRgb(0, 200, 0));
+                m_Rectangles[index].Fill = new SolidColorBrush(Color.FromRgb(0, 200, 0));
                 m_IsStartSet = true;
             }
             else if (cellType == "Destination")
             {
-                m_Rectangles[xCellIndex + yCellIndex * yCount].Fill = new SolidColorBrush(Color.FromRgb(200, 0, 0));
+                m_Rectangles[index].Fill = new SolidColorBrush(Color.FromRgb(200, 0, 0));
                 m_IsDestinationSet = true;
             }
         }
@@ -245,7 +274,8 @@ namespace Project
 
             public void ClearAdjacencyList()
             {
-                m_AdjacencyList = new LinkedList<int>[V];
+                m_AdjacencyList = new LinkedList<int>[xCount * yCount];
+                V = m_AdjacencyList.Count();
 
                 for (int i = 0; i < m_AdjacencyList.Length; i++)
                     m_AdjacencyList[i] = new LinkedList<int>();
@@ -299,7 +329,7 @@ namespace Project
                         for (int j = 0; j < xCount * yCount; j++)
                         {
                             if (rectArr[j].Name == "Free" || rectArr[j].Name == "Path")
-                                rectArr[j].Fill = new SolidColorBrush(Color.FromRgb(255, (byte)(255 * i/(delayIntensity - 1)), (byte)(255 * i / (delayIntensity - 1))));
+                                rectArr[j].Fill = new SolidColorBrush(Color.FromRgb(255, (byte)(255 * i / (delayIntensity - 1)), (byte)(255 * i / (delayIntensity - 1))));
                         }
                         await Task.Delay(delayIntensity - i);
                     }
@@ -358,7 +388,9 @@ namespace Project
         private Action m_CurrentAction = (Action)3;
 
         private Graph m_Graph = new Graph(xCount * yCount);
+
         private int m_StartIndex = xStartPos + yStartPos * yCount;
+
         private int m_DestIndex = xDestPos + yDestPos * yCount;
 
         private static bool m_CurrentlyFinding = false;

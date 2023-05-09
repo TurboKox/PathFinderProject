@@ -9,13 +9,15 @@
         ResizeMode="NoResize">
 
     <Grid x:Name="MainGrid" PreviewMouseDown="MainGrid_PreviewMouseDown" Margin="0">
-        
+
         <Canvas x:Name="Options" Width="900" Height="640">
-            <Button Canvas.Right="10" Canvas.Top="10" Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetStartPositionBtn_Click">Set Start Position</Button>
+            <Button Canvas.Right="10" Canvas.Top="10"  Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetStartPositionBtn_Click">Set Start Position</Button>
             <Button Canvas.Right="10" Canvas.Top="70"  Height="40" Width="150" Margin="0, 0, 20, 0" Click="SetDestinationBtn_Click">Set Destination Position</Button>
             <Button Canvas.Right="10" Canvas.Top="130" Height="40" Width="150" Margin="0, 0, 20, 0" Click="FindPathBtn_Click">Find Path</Button>
             <Button Canvas.Right="10" Canvas.Top="190" Height="40" Width="150" Margin="0, 0, 20, 0" Click="ClearBoard_Click">Clear Board</Button>
+            <Label  Canvas.Right="10" Canvas.Top="235" Height="40" Width="150" Margin="0, 0, 20, 0" x:Name="MapSizeLbl" Content="Map Size: 15 x 15" FontSize="16"></Label>
+            <Slider Canvas.Right="10" Canvas.Top="270" Height="40" Width="150" Margin="0, 0, 20, 0" Value="15" PreviewMouseUp="Slider_MouseUp" IsSnapToTickEnabled="True" TickFrequency="1" Minimum="5" Maximum="25"></Slider>
         </Canvas>
-        
+
     </Grid>
 </Window>
